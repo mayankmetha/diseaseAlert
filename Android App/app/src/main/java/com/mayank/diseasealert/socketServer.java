@@ -19,8 +19,8 @@ public class socketServer extends Thread {
                 Socket s = ss.accept();
                 ps = new PrintStream(s.getOutputStream());
                 for(;;) {
-                    ps.println(System.currentTimeMillis()+","+MainActivity.lon + "," + MainActivity.lat);
-                    sleep(60*1000);
+                    ps.println(MainActivity.id + "," + System.currentTimeMillis() + "," + MainActivity.lon + "," + MainActivity.lat);
+                    sleep(5*1000);
                     if(MainActivity.r.nextBoolean()) {
                         MainActivity.lat = MainActivity.r.nextBoolean()?String.format("%.2f", Double.parseDouble(MainActivity.lat)+0.1):String.format("%.2f", Double.parseDouble(MainActivity.lat)-0.1);
                     } else {

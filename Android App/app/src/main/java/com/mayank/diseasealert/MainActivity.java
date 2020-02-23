@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Random;
-
 public class MainActivity extends AppCompatActivity {
 
     public static Random r;
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public static String lon;
     private static String ip;
     public static Handler UIHandler;
+    public static String id;
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
@@ -39,7 +39,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
+        id = "mobilePhoneGPS";
         r = new Random();
+        lon = String.format("%.2f", r.nextDouble() * (180 - (-180)) + (-180));
+        lat = String.format("%.2f", r.nextDouble() * (90 - (-90)) + (-90));
 
         points = findViewById(R.id.point);
 
@@ -67,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
                 UIHandler = new Handler(Looper.getMainLooper());
 
-                lon = String.format("%.2f", r.nextDouble() * (180 - (-180)) + (-180));
-                lat = String.format("%.2f", r.nextDouble() * (90 - (-90)) + (-90));
                 setMessage();
 
                 Thread socketThread = new Thread(new socketServer());
