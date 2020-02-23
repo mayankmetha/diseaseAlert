@@ -8,6 +8,9 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,11 +28,13 @@ public class MainActivity extends AppCompatActivity {
     public static String lat;
     public static String lon;
     private static String ip;
+    public static Handler UIHandler;
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
@@ -38,8 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         points = findViewById(R.id.point);
 
-        Button sertverLaunch = findViewById(R.id.button);
-        sertverLaunch.setOnClickListener(view -> {
+        Button exit = findViewById(R.id.exit);
+        exit.setOnClickListener(view -> {
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(0);
+        });
+
+        Button serverLaunch = findViewById(R.id.button);
+        serverLaunch.setOnClickListener(view -> {
             EditText port = findViewById(R.id.portEditText);
 
             if(port.getText().toString().isEmpty()) {
@@ -54,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 int ipAddress = wifiInf.getIpAddress();
                 ip = String.format("%d.%d.%d.%d:%s", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff), port.getText().toString());
 
+                UIHandler = new Handler(Looper.getMainLooper());
+
                 lon = String.format("%.2f", r.nextDouble() * (180 - (-180)) + (-180));
                 lat = String.format("%.2f", r.nextDouble() * (90 - (-90)) + (-90));
                 setMessage();
@@ -65,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void setMessage() {
-        points.setText("IP: " + ip + "\n\nLat: " + lat + "\nLon: " + lon);
+        runOnUI(() -> points.setText("IP: " + ip + "\n\nLat: " + lat + "\nLon: " + lon));
+    }
+
+    public static void runOnUI(Runnable runnable) {
+        UIHandler.post(runnable);
     }
 }

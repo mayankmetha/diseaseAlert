@@ -69,6 +69,20 @@
         android:text="Connect"
         tools:ignore="HardcodedText" />
 
+    <com.google.android.material.button.MaterialButton
+        style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Exit"
+        tools:ignore="HardcodedText" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
