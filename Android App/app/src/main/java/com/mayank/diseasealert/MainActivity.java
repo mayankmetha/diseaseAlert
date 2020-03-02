@@ -24,8 +24,12 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public static TextView points;
     public static int ServerPort;
-    public static String lat;
-    public static String lon;
+    public static double lat;
+    public static double lon;
+    public static double minlat;
+    public static double minlon;
+    public static double maxlat;
+    public static double maxlon;
     private static String ip;
     public static Handler UIHandler;
     public static String id;
@@ -41,8 +45,12 @@ public class MainActivity extends AppCompatActivity {
 
         id = "mobilePhoneGPS";
         r = new Random();
-        lon = String.format("%.2f", r.nextDouble() * (180 - (-180)) + (-180));
-        lat = String.format("%.2f", r.nextDouble() * (90 - (-90)) + (-90));
+        lon = r.nextDouble() * (180 - (-180)) + (-180);
+        lat = r.nextDouble() * (90 - (-90)) + (-90);
+        minlat=0.0;
+        minlon=0.0;
+        maxlat=0.0;
+        maxlon=0.0;
 
         points = findViewById(R.id.point);
 
@@ -79,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void setMessage() {
-        runOnUI(() -> points.setText("IP: " + ip + "\n\nLat: " + lat + "\nLon: " + lon));
+        runOnUI(() -> points.setText("IP: " + ip + "\n\nLat: " + String.format("%.2f", lat) + "\nLon: " + String.format("%.2f", lon)));
     }
 
     public static void runOnUI(Runnable runnable) {
