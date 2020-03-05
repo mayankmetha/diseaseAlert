@@ -26,10 +26,6 @@ public class MainActivity extends AppCompatActivity {
     public static int ServerPort;
     public static double lat;
     public static double lon;
-    public static double minlat;
-    public static double minlon;
-    public static double maxlat;
-    public static double maxlon;
     private static String ip;
     public static Handler UIHandler;
     public static String id;
@@ -47,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
         r = new Random();
         lon = r.nextDouble() * (180 - (-180)) + (-180);
         lat = r.nextDouble() * (90 - (-90)) + (-90);
-        minlat=0.0;
-        minlon=0.0;
-        maxlat=0.0;
-        maxlon=0.0;
 
         points = findViewById(R.id.point);
 

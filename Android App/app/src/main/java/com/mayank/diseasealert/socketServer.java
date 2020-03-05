@@ -20,12 +20,7 @@ public class socketServer extends Thread {
                 Socket s = ss.accept();
                 ps = new PrintStream(s.getOutputStream());
                 for(;;) {
-                    MainActivity.minlat = MainActivity.lat-0.25;
-                    MainActivity.maxlat = MainActivity.lat+0.25;
-                    MainActivity.minlon = MainActivity.lon-0.25;
-                    MainActivity.maxlon = MainActivity.lon+0.25;
-                    Log.e("points",""+MainActivity.minlat+","+MainActivity.maxlat+","+MainActivity.minlon+","+MainActivity.maxlon);
-                    ps.println(MainActivity.id + "," + System.currentTimeMillis() + "," + String.format("%.2f", MainActivity.minlon) + "," + String.format("%.2f", MainActivity.maxlon) + "," + String.format("%.2f", MainActivity.minlat) + "," + String.format("%.2f", MainActivity.maxlat));
+                    ps.println(MainActivity.id + "," + System.currentTimeMillis() + "," + String.format("%.2f", MainActivity.lon) + "," + String.format("%.2f", MainActivity.lat));
                     sleep(5*1000);
                     if(MainActivity.r.nextBoolean()) {
                         MainActivity.lat = MainActivity.r.nextBoolean()? MainActivity.lat+0.1: MainActivity.lat-0.1;
