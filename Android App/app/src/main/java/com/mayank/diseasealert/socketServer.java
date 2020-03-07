@@ -1,7 +1,6 @@
 package com.mayank.diseasealert;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import java.io.PrintStream;
 import java.net.ServerSocket;

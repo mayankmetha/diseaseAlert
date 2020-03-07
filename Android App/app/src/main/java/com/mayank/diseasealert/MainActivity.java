@@ -2,11 +2,16 @@ package com.mayank.diseasealert;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,7 +22,15 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
 
     public static Random r;
@@ -29,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private static String ip;
     public static Handler UIHandler;
     public static String id;
+    public static String count = "";
+    public NotificationChannel notificationChannel;
+    private static NotificationManager notificationManager;
+    Notification updateNotify;
+
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
@@ -52,12 +70,23 @@ public class MainActivity extends AppCompatActivity {
             System.exit(0);
         });
 
+        notificationChannel = new NotificationChannel("alert", "diseaseAlert", NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.enableLights(true);
+        notificationChannel.setShowBadge(true);
+        notificationChannel.enableVibration(false);
+        notificationChannel.canBypassDnd();
+        notificationChannel.setSound(null,null);
+        notificationChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        notificationManager = getSystemService(NotificationManager.class);
+        assert notificationManager != null;
+        notificationManager.createNotificationChannel(notificationChannel);
+
         Button serverLaunch = findViewById(R.id.button);
         serverLaunch.setOnClickListener(view -> {
             EditText port = findViewById(R.id.portEditText);
 
             if(port.getText().toString().isEmpty()) {
-                Snackbar error = Snackbar.make(view, "Port cannot be empty!",Snackbar.LENGTH_INDEFINITE);
+                Snackbar error = Snackbar.make(view, "Spark port cannot be empty!",Snackbar.LENGTH_INDEFINITE);
                 error.setAction("OK", view1 -> error.dismiss());
                 error.show();
             } else {
@@ -72,17 +101,73 @@ public class MainActivity extends AppCompatActivity {
 
                 setMessage();
 
-                Thread socketThread = new Thread(new socketServer());
-                socketThread.start();
+                EditText serverip = findViewById(R.id.serverIPEditText);
+                if (serverip.getText().toString().isEmpty()) {
+                    Snackbar error = Snackbar.make(view, "Server IP cannot be empty!", Snackbar.LENGTH_INDEFINITE);
+                    error.setAction("OK", view1 -> error.dismiss());
+                    error.show();
+                } else {
+                    try {
+                        final URL url = new URL("http://" + serverip.getText().toString().replaceAll("\n","") + ":8080");
+                        Thread socketThread = new Thread(new socketServer());
+                        socketThread.start();
+                        final Handler pushNotify = new Handler();
+                        Timer timer = new Timer();
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                pushNotify.post(() -> new checkUpdate().execute(url));
+
+                                if (!count.isEmpty() && !count.equals("0"))
+                                    runOnUI(() -> {
+                                        updateNotify = new Notification.Builder(getApplicationContext(), "alert")
+                                                .setContentTitle("Disease Outbreak")
+                                                .setSmallIcon(R.mipmap.ic_launcher_round)
+                                                .setContentText(count + " disease cases nearby!")
+                                                .setAutoCancel(true)
+                                                .build();
+                                        notificationManager.notify(0, updateNotify);
+                                    });
+                                else
+                                    notificationManager.cancel(0);
+                            }
+                        };
+                        timer.schedule(task, 0, 1000);
+                    } catch(MalformedURLException e){
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void setMessage() {
-        runOnUI(() -> points.setText("IP: " + ip + "\n\nLat: " + String.format("%.2f", lat) + "\nLon: " + String.format("%.2f", lon)));
+        runOnUI(() -> points.setText("IP: " + ip + "\n\nLon: " + String.format("%.2f", lon) + "\nLat: " + String.format("%.2f", lat)));
     }
 
     public static void runOnUI(Runnable runnable) {
         UIHandler.post(runnable);
     }
+
+    private class checkUpdate extends AsyncTask<URL, Void, String> {
+        @Override
+        protected String doInBackground(URL... urls) {
+            String str = "";
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(urls[0].openStream()));
+                str = in.readLine();
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return str;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            count = result;
+        }
+    }
+
 }
