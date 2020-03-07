@@ -217,4 +217,8 @@ lint/tmp/
 # macOS
 .DS_Store
 
-node_modules/*
+#nodeJS modules
+node_modules/
+
+# tmp
+tmp
