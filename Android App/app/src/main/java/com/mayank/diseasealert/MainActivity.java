@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static Random r;
     @SuppressLint("StaticFieldLeak")
     public static TextView points;
+    public static TextView intelligence;
     public static int ServerPort;
     public static double lat;
     public static double lon;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         lon = r.nextDouble() * (180 - (-180)) + (-180);
         lat = r.nextDouble() * (90 - (-90)) + (-90);
 
+        intelligence = findViewById(R.id.intelligence);
         points = findViewById(R.id.point);
 
         Button exit = findViewById(R.id.exit);
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                                     notificationManager.cancel(0);
                             }
                         };
-                        timer.schedule(task, 0, 1000);
+                        timer.schedule(task, 0, 5000);
                     } catch(MalformedURLException e){
                         e.printStackTrace();
                     }
@@ -144,6 +146,16 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void setMessage() {
         runOnUI(() -> points.setText("IP: " + ip + "\n\nLon: " + String.format("%.2f", lon) + "\nLat: " + String.format("%.2f", lat)));
+        int c = count.isEmpty()?0:Integer.parseInt(count);
+        if (c <= 10 && c > 0) {
+            runOnUI(() -> intelligence.setText("Wash hands regularly!"));
+        } else if (c <= 50 && c > 10) {
+            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!"));
+        } else if (c <= 100 && c > 50) {
+            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nStay at home and avoid travelling unless necessary!"));
+        } else {
+            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nWear face mask!\nStay at home and avoid travelling unless necessary!"));
+        }
     }
 
     public static void runOnUI(Runnable runnable) {
