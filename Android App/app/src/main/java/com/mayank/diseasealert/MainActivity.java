@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static Random r;
     @SuppressLint("StaticFieldLeak")
     public static TextView points;
+    @SuppressLint("StaticFieldLeak")
     public static TextView intelligence;
     public static int ServerPort;
     public static double lat;
@@ -132,6 +133,19 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                 else
                                     notificationManager.cancel(0);
+
+                                int c = count.isEmpty()?0:Integer.parseInt(count);
+                                if (c == 0) {
+                                    runOnUI(() -> intelligence.setText("Have a safe day!"));
+                                } else if (c <= 10 && c > 0) {
+                                    runOnUI(() -> intelligence.setText("Wash hands regularly!"));
+                                } else if (c <= 50 && c > 10) {
+                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!"));
+                                } else if (c <= 100 && c > 50) {
+                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nStay at home and avoid travelling unless necessary!"));
+                                } else {
+                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nWear face mask!\nStay at home and avoid travelling unless necessary!"));
+                                }
                             }
                         };
                         timer.schedule(task, 0, 5000);
@@ -146,16 +160,6 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void setMessage() {
         runOnUI(() -> points.setText("IP: " + ip + "\n\nLon: " + String.format("%.2f", lon) + "\nLat: " + String.format("%.2f", lat)));
-        int c = count.isEmpty()?0:Integer.parseInt(count);
-        if (c <= 10 && c > 0) {
-            runOnUI(() -> intelligence.setText("Wash hands regularly!"));
-        } else if (c <= 50 && c > 10) {
-            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!"));
-        } else if (c <= 100 && c > 50) {
-            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nStay at home and avoid travelling unless necessary!"));
-        } else {
-            runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nWear face mask!\nStay at home and avoid travelling unless necessary!"));
-        }
     }
 
     public static void runOnUI(Runnable runnable) {

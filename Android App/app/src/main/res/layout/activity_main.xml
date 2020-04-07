@@ -43,6 +43,7 @@
             android:gravity="start"
             android:hint="Enter push notification server ip"
             android:importantForAutofill="no"
+            android:inputType="number|text"
             android:padding="5dp"
             android:paddingStart="5dp"
             android:paddingLeft="5dp"
