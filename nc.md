@@ -1,6 +1,6 @@
 # Start nc
 
-`nc -lk <socket port>`
+`nc -lk <non android stream socket port>`
 
 # Input for nc
 
