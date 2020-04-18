@@ -119,33 +119,33 @@ public class MainActivity extends AppCompatActivity {
                         TimerTask task = new TimerTask() {
                             @Override
                             public void run() {
-                                pushNotify.post(() -> new checkUpdate().execute(url));
+                            pushNotify.post(() -> new checkUpdate().execute(url));
 
-                                if (!count.isEmpty() && !count.equals("0"))
-                                    runOnUI(() -> {
-                                        updateNotify = new Notification.Builder(getApplicationContext(), "alert")
-                                                .setContentTitle("Disease Outbreak")
-                                                .setSmallIcon(R.mipmap.ic_launcher_round)
-                                                .setContentText(count + " disease cases nearby!")
-                                                .setAutoCancel(true)
-                                                .build();
-                                        notificationManager.notify(0, updateNotify);
-                                    });
-                                else
-                                    notificationManager.cancel(0);
+                            if (!count.isEmpty() && !count.equals("0"))
+                                runOnUI(() -> {
+                                    updateNotify = new Notification.Builder(getApplicationContext(), "alert")
+                                            .setContentTitle("Disease Outbreak")
+                                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                                            .setContentText(count + " disease cases nearby!")
+                                            .setAutoCancel(true)
+                                            .build();
+                                    notificationManager.notify(0, updateNotify);
+                                });
+                            else
+                                notificationManager.cancel(0);
 
-                                int c = count.isEmpty()?0:Integer.parseInt(count);
-                                if (c == 0) {
-                                    runOnUI(() -> intelligence.setText("Have a safe day!"));
-                                } else if (c <= 10 && c > 0) {
-                                    runOnUI(() -> intelligence.setText("Wash hands regularly!"));
-                                } else if (c <= 50 && c > 10) {
-                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!"));
-                                } else if (c <= 100 && c > 50) {
-                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nStay at home and avoid travelling unless necessary!"));
-                                } else {
-                                    runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nWear face mask!\nStay at home and avoid travelling unless necessary!"));
-                                }
+                            int c = count.isEmpty()?0:Integer.parseInt(count);
+                            if (c == 0) {
+                                runOnUI(() -> intelligence.setText("Have a safe day!"));
+                            } else if (c <= 10 && c > 0) {
+                                runOnUI(() -> intelligence.setText("Wash hands regularly!"));
+                            } else if (c <= 50 && c > 10) {
+                                runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!"));
+                            } else if (c <= 100 && c > 50) {
+                                runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nStay at home and avoid travelling unless necessary!"));
+                            } else {
+                                runOnUI(() -> intelligence.setText("Wash hands regularly!\nMaintain social distance!\nWear face mask!\nStay at home and avoid travelling unless necessary!"));
+                            }
                             }
                         };
                         timer.schedule(task, 0, 5000);
